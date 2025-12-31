@@ -1,0 +1,101 @@
+.tech-card {
+  display: block;
+  padding: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.2s;
+}
+
+.tech-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.tech-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.tech-card-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.tech-card-badges {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.tech-card-description {
+  font-size: 0.875rem;
+  color: #4b5563;
+  margin: 0;
+}
+
+.badge {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 0.25rem;
+}
+
+.badge-new {
+  background-color: #f3e8ff;
+  color: #6b21a8;
+}
+
+.badge-ring {
+  border: 1px solid;
+}
+
+.badge-adopt {
+  background-color: #dcfce7;
+  color: #166534;
+  border-color: #86efac;
+}
+
+.badge-trial {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border-color: #93c5fd;
+}
+
+.badge-assess {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-color: #fcd34d;
+}
+
+.badge-hold {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border-color: #fca5a5;
+}
+
+.badge-quadrant {
+  background-color: #f3f4f6;
+  color: #374151;
+  text-transform: capitalize;
+}
+
+.movement-indicator {
+  font-size: 1rem;
+}
+
+.movement-up {
+  color: #16a34a;
+}
+
+.movement-down {
+  color: #dc2626;
+}
