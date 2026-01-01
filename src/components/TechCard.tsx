@@ -18,7 +18,6 @@ export const TechCard = ({ entry }: TechCardProps) => {
     <Link to={`/tech/${entry.id}`} className="tech-card">
       <div className="tech-card-header">
         <h3 className="tech-card-title">{entry.name}</h3>
-        {entry.isNew && <span className="badge badge-new">NEW</span>}
       </div>
 
       <div className="tech-card-badges">

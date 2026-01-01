@@ -13,11 +13,18 @@ export const RadarPage = () => {
     "all"
   );
   const [view, setView] = useState<"radar" | "list">("radar");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const normalizedSearch = searchTerm.trim().toLowerCase();
 
   const filteredEntries = techEntries.filter((entry) => {
     if (selectedRing !== "all" && entry.ring !== selectedRing) return false;
     if (selectedQuadrant !== "all" && entry.quadrant !== selectedQuadrant)
       return false;
+    if (normalizedSearch) {
+      const matchesSearch = entry.name.toLowerCase().includes(normalizedSearch);
+      if (!matchesSearch) return false;
+    }
     return true;
   });
 
@@ -56,6 +63,15 @@ export const RadarPage = () => {
                 List View
               </button>
             </div>
+
+            <input
+              type="search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search technologies..."
+              aria-label="Search technologies"
+              className="filter-input"
+            />
 
             {/* Ring Filter */}
             <select

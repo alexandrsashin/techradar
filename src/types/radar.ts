@@ -11,7 +11,6 @@ export interface TechEntry {
   name: string;
   ring: Ring;
   quadrant: Quadrant;
-  isNew: boolean;
   description: string;
   detail: string;
   website?: string;

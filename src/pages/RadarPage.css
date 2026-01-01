@@ -73,7 +73,8 @@
   background-color: #e5e7eb;
 }
 
-.filter-select {
+.filter-select,
+.filter-input {
   padding: 0.5rem 1rem;
   border: 1px solid #d1d5db;
   border-radius: 0.5rem;
@@ -82,7 +83,14 @@
   cursor: pointer;
 }
 
-.filter-select:focus {
+.filter-input {
+  flex: 1 1 220px;
+  min-width: 220px;
+  cursor: text;
+}
+
+.filter-select:focus,
+.filter-input:focus {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -155,6 +163,10 @@
 
   .filter-count {
     margin-left: 0;
+  }
+
+  .filter-input {
+    width: 100%;
   }
 
   .tech-grid {

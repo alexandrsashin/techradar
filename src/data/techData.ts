@@ -12,7 +12,6 @@ const baseEntries: BaseEntry[] = [
     name: "TDD",
     ring: "adopt",
     quadrant: "methods",
-    isNew: false,
     description:
       "Test-Driven Development. Writing tests before code to ensure quality and maintainability.",
   },
@@ -21,7 +20,6 @@ const baseEntries: BaseEntry[] = [
     name: "CI/CD",
     ring: "adopt",
     quadrant: "methods",
-    isNew: false,
     description:
       "Continuous Integration and Continuous Deployment. Automated testing and deployment pipelines.",
   },
@@ -30,7 +28,6 @@ const baseEntries: BaseEntry[] = [
     name: "Microservices",
     ring: "adopt",
     quadrant: "methods",
-    isNew: false,
     description:
       "Architectural pattern for building distributed systems as loosely coupled services.",
   },
@@ -39,7 +36,6 @@ const baseEntries: BaseEntry[] = [
     name: "Infrastructure as Code",
     ring: "adopt",
     quadrant: "methods",
-    isNew: false,
     description:
       "Managing infrastructure through machine-readable definition files.",
   },
@@ -48,7 +44,6 @@ const baseEntries: BaseEntry[] = [
     name: "Domain-Driven Design",
     ring: "adopt",
     quadrant: "methods",
-    isNew: false,
     description:
       "Strategic approach to software design that focuses on modeling the business domain.",
   },
@@ -57,7 +52,6 @@ const baseEntries: BaseEntry[] = [
     name: "Event Sourcing",
     ring: "trial",
     quadrant: "methods",
-    isNew: false,
     description:
       "Storing state changes as a sequence of events. Useful for audit trails and temporal queries.",
   },
@@ -66,7 +60,6 @@ const baseEntries: BaseEntry[] = [
     name: "CQRS",
     ring: "trial",
     quadrant: "methods",
-    isNew: false,
     description:
       "Command Query Responsibility Segregation. Separating read and write models for better scalability.",
   },
@@ -75,7 +68,6 @@ const baseEntries: BaseEntry[] = [
     name: "Pair Programming",
     ring: "adopt",
     quadrant: "methods",
-    isNew: false,
     description:
       "Two developers working together at one workstation. Improves code quality and knowledge sharing.",
   },
@@ -84,7 +76,6 @@ const baseEntries: BaseEntry[] = [
     name: "Code Review",
     ring: "adopt",
     quadrant: "methods",
-    isNew: false,
     description:
       "Systematic examination of code by peers. Essential quality assurance practice.",
   },
@@ -93,7 +84,6 @@ const baseEntries: BaseEntry[] = [
     name: "Chaos Engineering",
     ring: "assess",
     quadrant: "methods",
-    isNew: true,
     description:
       "Testing system resilience by intentionally introducing failures in production.",
   },
@@ -102,7 +92,6 @@ const baseEntries: BaseEntry[] = [
     name: "Gitflow",
     ring: "hold",
     quadrant: "methods",
-    isNew: false,
     description:
       "Git branching model. Considered too complex for modern CI/CD practices.",
   },
@@ -111,7 +100,6 @@ const baseEntries: BaseEntry[] = [
     name: "Trunk-Based Development",
     ring: "adopt",
     quadrant: "methods",
-    isNew: false,
     description:
       "Development model with short-lived branches and frequent merges to main.",
   },
@@ -120,7 +108,6 @@ const baseEntries: BaseEntry[] = [
     name: "BDD",
     ring: "trial",
     quadrant: "methods",
-    isNew: false,
     description:
       "Behavior-Driven Development. Using natural language to describe test scenarios.",
   },
@@ -129,7 +116,6 @@ const baseEntries: BaseEntry[] = [
     name: "API-First Design",
     ring: "adopt",
     quadrant: "methods",
-    isNew: false,
     description:
       "Designing APIs before implementation. Ensures better integration and documentation.",
   },
@@ -138,7 +124,6 @@ const baseEntries: BaseEntry[] = [
     name: "Zero Trust Security",
     ring: "adopt",
     quadrant: "methods",
-    isNew: false,
     description:
       "Security model that assumes no implicit trust. Verify every request regardless of source.",
   },
@@ -149,7 +134,6 @@ const baseEntries: BaseEntry[] = [
     name: "TypeScript",
     ring: "adopt",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "Strongly typed programming language that builds on JavaScript. Recommended for all new projects requiring type safety and better tooling support.",
   },
@@ -158,7 +142,6 @@ const baseEntries: BaseEntry[] = [
     name: "Python",
     ring: "adopt",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "Versatile language for backend services, data science, and automation. Industry standard for ML/AI projects.",
   },
@@ -167,7 +150,6 @@ const baseEntries: BaseEntry[] = [
     name: "Rust",
     ring: "trial",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "Systems programming language focused on safety and performance. Being evaluated for performance-critical services.",
   },
@@ -176,7 +158,6 @@ const baseEntries: BaseEntry[] = [
     name: "Go",
     ring: "adopt",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "Efficient language for microservices and cloud-native applications. Excellent concurrency support.",
   },
@@ -185,7 +166,6 @@ const baseEntries: BaseEntry[] = [
     name: "React",
     ring: "adopt",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "Component-based library for building user interfaces. Default choice for web applications.",
   },
@@ -194,7 +174,6 @@ const baseEntries: BaseEntry[] = [
     name: "Next.js",
     ring: "adopt",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "React framework with server-side rendering and static generation. Recommended for production web apps.",
   },
@@ -203,7 +182,6 @@ const baseEntries: BaseEntry[] = [
     name: "Vue 3",
     ring: "trial",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "Progressive framework for building UIs. Being evaluated for specific use cases.",
   },
@@ -212,7 +190,6 @@ const baseEntries: BaseEntry[] = [
     name: "Svelte",
     ring: "assess",
     quadrant: "languages-frameworks",
-    isNew: true,
     description:
       "Compiler-based framework with minimal runtime. Under assessment for performance-critical UIs.",
   },
@@ -221,7 +198,6 @@ const baseEntries: BaseEntry[] = [
     name: "FastAPI",
     ring: "adopt",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "Modern Python web framework for building APIs. High performance with automatic documentation.",
   },
@@ -230,7 +206,6 @@ const baseEntries: BaseEntry[] = [
     name: "Django",
     ring: "adopt",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "High-level Python web framework. Batteries-included approach for rapid development.",
   },
@@ -239,7 +214,6 @@ const baseEntries: BaseEntry[] = [
     name: "Spring Boot",
     ring: "adopt",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "Java framework for building production-ready applications. Strong enterprise support.",
   },
@@ -248,7 +222,6 @@ const baseEntries: BaseEntry[] = [
     name: "Express.js",
     ring: "adopt",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "Minimal Node.js web framework. Flexible and widely adopted for APIs.",
   },
@@ -257,7 +230,6 @@ const baseEntries: BaseEntry[] = [
     name: "NestJS",
     ring: "adopt",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "Progressive Node.js framework with TypeScript. Angular-inspired architecture for scalable backends.",
   },
@@ -266,7 +238,6 @@ const baseEntries: BaseEntry[] = [
     name: "Angular",
     ring: "hold",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "Comprehensive frontend framework. Prefer React or Vue for new projects.",
   },
@@ -275,7 +246,6 @@ const baseEntries: BaseEntry[] = [
     name: "Solid.js",
     ring: "assess",
     quadrant: "languages-frameworks",
-    isNew: true,
     description:
       "Reactive UI library with fine-grained reactivity. Exceptional performance without virtual DOM.",
   },
@@ -284,7 +254,6 @@ const baseEntries: BaseEntry[] = [
     name: "Astro",
     ring: "trial",
     quadrant: "languages-frameworks",
-    isNew: true,
     description:
       "Static site generator with partial hydration. Excellent for content-heavy sites.",
   },
@@ -293,7 +262,6 @@ const baseEntries: BaseEntry[] = [
     name: "Kotlin",
     ring: "adopt",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "Modern JVM language. Recommended for Android and backend development.",
   },
@@ -302,7 +270,6 @@ const baseEntries: BaseEntry[] = [
     name: "Swift",
     ring: "adopt",
     quadrant: "languages-frameworks",
-    isNew: false,
     description: "Apple's language for iOS/macOS development. Modern and safe.",
   },
   {
@@ -310,7 +277,6 @@ const baseEntries: BaseEntry[] = [
     name: "Flutter",
     ring: "trial",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "Cross-platform UI framework. Single codebase for mobile, web, and desktop.",
   },
@@ -319,7 +285,6 @@ const baseEntries: BaseEntry[] = [
     name: "Elixir",
     ring: "assess",
     quadrant: "languages-frameworks",
-    isNew: true,
     description:
       "Functional language for scalable applications. Built on Erlang VM.",
   },
@@ -328,7 +293,6 @@ const baseEntries: BaseEntry[] = [
     name: "Phoenix",
     ring: "assess",
     quadrant: "languages-frameworks",
-    isNew: true,
     description:
       "Elixir web framework. Real-time capabilities and high concurrency.",
   },
@@ -337,7 +301,6 @@ const baseEntries: BaseEntry[] = [
     name: "GraphQL",
     ring: "adopt",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "Query language for APIs. Efficient data fetching with flexible schemas.",
   },
@@ -346,7 +309,6 @@ const baseEntries: BaseEntry[] = [
     name: "tRPC",
     ring: "trial",
     quadrant: "languages-frameworks",
-    isNew: true,
     description:
       "End-to-end typesafe APIs. No code generation needed for TypeScript projects.",
   },
@@ -355,7 +317,6 @@ const baseEntries: BaseEntry[] = [
     name: "Remix",
     ring: "trial",
     quadrant: "languages-frameworks",
-    isNew: true,
     description:
       "Full-stack React framework. Focus on web fundamentals and progressive enhancement.",
   },
@@ -364,7 +325,6 @@ const baseEntries: BaseEntry[] = [
     name: "Node.js",
     ring: "adopt",
     quadrant: "languages-frameworks",
-    isNew: false,
     description:
       "JavaScript runtime built on Chrome's V8 engine. Standard for backend JavaScript applications.",
   },
@@ -373,7 +333,6 @@ const baseEntries: BaseEntry[] = [
     name: "Deno",
     ring: "assess",
     quadrant: "languages-frameworks",
-    isNew: true,
     description:
       "Modern runtime for JavaScript and TypeScript. Secure by default with built-in TypeScript support.",
   },
@@ -382,7 +341,6 @@ const baseEntries: BaseEntry[] = [
     name: "Bun",
     ring: "assess",
     quadrant: "languages-frameworks",
-    isNew: true,
     description:
       "All-in-one JavaScript runtime & toolkit. Significantly faster than Node.js.",
   },
@@ -393,7 +351,6 @@ const baseEntries: BaseEntry[] = [
     name: "Vite",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Next-generation build tool. Significantly faster than traditional bundlers.",
   },
@@ -402,7 +359,6 @@ const baseEntries: BaseEntry[] = [
     name: "React Router",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Declarative routing library for React applications. Industry standard for client-side routing with support for nested routes, lazy loading, and data loading patterns.",
   },
@@ -411,7 +367,6 @@ const baseEntries: BaseEntry[] = [
     name: "Zod",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "TypeScript-first schema validation library. Provides type-safe runtime validation with excellent inference and composability for API payloads, form data, and configuration.",
   },
@@ -420,7 +375,6 @@ const baseEntries: BaseEntry[] = [
     name: "Docker",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Containerization platform. Standard for deployment and development environments.",
   },
@@ -429,7 +383,6 @@ const baseEntries: BaseEntry[] = [
     name: "Kubernetes",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Container orchestration platform. Used for production deployments.",
   },
@@ -438,7 +391,6 @@ const baseEntries: BaseEntry[] = [
     name: "ESBuild",
     ring: "trial",
     quadrant: "tools",
-    isNew: false,
     description:
       "Extremely fast JavaScript bundler. Being evaluated as Vite alternative.",
   },
@@ -447,7 +399,6 @@ const baseEntries: BaseEntry[] = [
     name: "Terraform",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Infrastructure as code tool. Standard for managing cloud resources.",
   },
@@ -456,7 +407,6 @@ const baseEntries: BaseEntry[] = [
     name: "React Query (TanStack Query)",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Powerful data synchronization library for React. Handles server state management with caching, background updates, and automatic refetching.",
   },
@@ -465,7 +415,6 @@ const baseEntries: BaseEntry[] = [
     name: "Zustand",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Lightweight state management library. Simple API with minimal boilerplate for React applications.",
   },
@@ -474,7 +423,6 @@ const baseEntries: BaseEntry[] = [
     name: "Redux Toolkit",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Official Redux toolset with batteries included. Simplifies store setup and reduces boilerplate significantly.",
   },
@@ -483,7 +431,6 @@ const baseEntries: BaseEntry[] = [
     name: "Jotai",
     ring: "trial",
     quadrant: "tools",
-    isNew: true,
     description:
       "Primitive and flexible state management for React. Atomic approach with bottom-up composition.",
   },
@@ -492,7 +439,6 @@ const baseEntries: BaseEntry[] = [
     name: "Axios",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Promise-based HTTP client. Supports request/response interceptors, automatic JSON transformation.",
   },
@@ -501,7 +447,6 @@ const baseEntries: BaseEntry[] = [
     name: "SWR",
     ring: "trial",
     quadrant: "tools",
-    isNew: false,
     description:
       "React Hooks library for data fetching. Stale-while-revalidate strategy for optimal UX.",
   },
@@ -510,7 +455,6 @@ const baseEntries: BaseEntry[] = [
     name: "Tailwind CSS",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Utility-first CSS framework. Rapid UI development with design constraints built-in.",
   },
@@ -519,7 +463,6 @@ const baseEntries: BaseEntry[] = [
     name: "shadcn/ui",
     ring: "adopt",
     quadrant: "tools",
-    isNew: true,
     description:
       "Collection of re-usable components. Built with Radix UI and Tailwind CSS, copy-paste approach.",
   },
@@ -528,7 +471,6 @@ const baseEntries: BaseEntry[] = [
     name: "Radix UI",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Unstyled, accessible UI components. Excellent primitives for building design systems.",
   },
@@ -537,7 +479,6 @@ const baseEntries: BaseEntry[] = [
     name: "Material-UI (MUI)",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "React component library implementing Material Design. Comprehensive set of pre-built components.",
   },
@@ -546,7 +487,6 @@ const baseEntries: BaseEntry[] = [
     name: "Ant Design",
     ring: "trial",
     quadrant: "tools",
-    isNew: false,
     description:
       "Enterprise-class UI design system. Rich component library for React applications.",
   },
@@ -555,7 +495,6 @@ const baseEntries: BaseEntry[] = [
     name: "Framer Motion",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Production-ready animation library for React. Simple API for complex animations.",
   },
@@ -564,7 +503,6 @@ const baseEntries: BaseEntry[] = [
     name: "React Hook Form",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Performant form library with easy validation. Minimal re-renders and flexible integration.",
   },
@@ -573,7 +511,6 @@ const baseEntries: BaseEntry[] = [
     name: "Formik",
     ring: "hold",
     quadrant: "tools",
-    isNew: false,
     description:
       "Form library for React. Consider React Hook Form for better performance.",
   },
@@ -582,7 +519,6 @@ const baseEntries: BaseEntry[] = [
     name: "date-fns",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Modern JavaScript date utility library. Modular and functional approach.",
   },
@@ -591,7 +527,6 @@ const baseEntries: BaseEntry[] = [
     name: "Day.js",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Lightweight date library. Moment.js-compatible API with tiny footprint.",
   },
@@ -600,7 +535,6 @@ const baseEntries: BaseEntry[] = [
     name: "Lodash",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "JavaScript utility library. Provides utility functions for common programming tasks.",
   },
@@ -609,7 +543,6 @@ const baseEntries: BaseEntry[] = [
     name: "Playwright",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "End-to-end testing framework. Cross-browser automation with excellent developer experience.",
   },
@@ -618,7 +551,6 @@ const baseEntries: BaseEntry[] = [
     name: "Vitest",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Blazing fast unit test framework. Vite-native testing with Jest-compatible API.",
   },
@@ -627,7 +559,6 @@ const baseEntries: BaseEntry[] = [
     name: "Testing Library",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Simple and complete testing utilities. Encourages good testing practices focused on user behavior.",
   },
@@ -636,7 +567,6 @@ const baseEntries: BaseEntry[] = [
     name: "Storybook",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Frontend workshop for building UI components and pages in isolation. Essential for design systems.",
   },
@@ -645,7 +575,6 @@ const baseEntries: BaseEntry[] = [
     name: "Prettier",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Opinionated code formatter. Enforces consistent code style across projects.",
   },
@@ -654,7 +583,6 @@ const baseEntries: BaseEntry[] = [
     name: "ESLint",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Pluggable JavaScript linter. Finds and fixes problems in your code.",
   },
@@ -663,7 +591,6 @@ const baseEntries: BaseEntry[] = [
     name: "Turborepo",
     ring: "trial",
     quadrant: "tools",
-    isNew: true,
     description:
       "High-performance build system for JavaScript/TypeScript monorepos. Smart caching and parallel execution.",
   },
@@ -672,7 +599,6 @@ const baseEntries: BaseEntry[] = [
     name: "pnpm",
     ring: "adopt",
     quadrant: "tools",
-    isNew: false,
     description:
       "Fast, disk space efficient package manager. Uses content-addressable storage for dependencies.",
   },
@@ -683,7 +609,6 @@ const baseEntries: BaseEntry[] = [
     name: "AWS",
     ring: "adopt",
     quadrant: "platforms",
-    isNew: false,
     description:
       "Primary cloud platform. Comprehensive services for all workloads.",
   },
@@ -692,7 +617,6 @@ const baseEntries: BaseEntry[] = [
     name: "Vercel",
     ring: "adopt",
     quadrant: "platforms",
-    isNew: false,
     description:
       "Platform for frontend deployment. Optimized for Next.js applications.",
   },
@@ -701,7 +625,6 @@ const baseEntries: BaseEntry[] = [
     name: "CloudFlare Workers",
     ring: "trial",
     quadrant: "platforms",
-    isNew: true,
     description:
       "Edge computing platform. Being evaluated for low-latency applications.",
   },
@@ -710,7 +633,6 @@ const baseEntries: BaseEntry[] = [
     name: "Supabase",
     ring: "assess",
     quadrant: "platforms",
-    isNew: true,
     description:
       "Open source Firebase alternative. Under assessment for rapid prototyping.",
   },
@@ -719,7 +641,6 @@ const baseEntries: BaseEntry[] = [
     name: "PostgreSQL",
     ring: "adopt",
     quadrant: "platforms",
-    isNew: false,
     description: "Relational database. Default choice for structured data.",
   },
   {
@@ -727,7 +648,6 @@ const baseEntries: BaseEntry[] = [
     name: "Redis",
     ring: "adopt",
     quadrant: "platforms",
-    isNew: false,
     description:
       "In-memory data store. Used for caching and session management.",
   },

@@ -38,7 +38,6 @@ export const TechDetail = () => {
       <div className="detail-card">
         <div className="detail-header">
           <h1 className="detail-title">{entry.name}</h1>
-          {entry.isNew && <span className="badge badge-new">NEW</span>}
         </div>
 
         <div className="detail-badges">
