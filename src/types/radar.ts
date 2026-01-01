@@ -17,9 +17,3 @@ export interface TechEntry {
   repository?: string;
   resources?: Array<{ label: string; url: string }>;
 }
-
-export interface RadarConfig {
-  entries: TechEntry[];
-  rings: { name: string; color: string }[];
-  quadrants: { name: string }[];
-}
