@@ -228,27 +228,66 @@ export const TechRadarVisualization = ({
       });
     });
 
-    // Quadrant labels positioned beyond each quadrant's offset center
-    quadrantConfigs.forEach((config) => {
-      const dirLength = Math.sqrt(
-        config.offset.x * config.offset.x + config.offset.y * config.offset.y
-      );
-      const normalized = {
-        x: dirLength === 0 ? 0 : config.offset.x / dirLength,
-        y: dirLength === 0 ? 0 : config.offset.y / dirLength,
-      };
-      const labelRadius = maxRadius + gapSize + 40;
-      const x = config.offset.x + normalized.x * labelRadius;
-      const y = config.offset.y + normalized.y * labelRadius;
+    // Quadrant labels placed outside sectors without clipping
+    const lineHeight = 18;
+    const horizontalLabelOffset = maxRadius * 0.7 + gapSize * 0.1;
+    const verticalLabelOffset = maxRadius + gapSize * 0.3;
+    const quadrantLabelPositions: Record<
+      (typeof quadrantConfigs)[number]["key"],
+      { x: number; y: number; anchor: "start" | "end" }
+    > = {
+      methods: {
+        x: horizontalLabelOffset,
+        y: -verticalLabelOffset,
+        anchor: "start",
+      },
+      "languages-frameworks": {
+        x: -horizontalLabelOffset,
+        y: -verticalLabelOffset,
+        anchor: "end",
+      },
+      tools: {
+        x: -horizontalLabelOffset,
+        y: verticalLabelOffset,
+        anchor: "end",
+      },
+      platforms: {
+        x: horizontalLabelOffset,
+        y: verticalLabelOffset,
+        anchor: "start",
+      },
+    };
 
-      g.append("text")
-        .attr("x", x)
-        .attr("y", y)
-        .attr("text-anchor", "middle")
+    const getQuadrantLines = (name: string) => {
+      const parts = name.split(" & ");
+      if (parts.length > 1) {
+        const [first, ...rest] = parts;
+        return [`${first.toUpperCase()} &`, rest.join(" & ").toUpperCase()];
+      }
+      return [name.toUpperCase()];
+    };
+
+    quadrantConfigs.forEach((config) => {
+      const pos = quadrantLabelPositions[config.key];
+      if (!pos) return;
+      const lines = getQuadrantLines(config.name);
+
+      const text = g
+        .append("text")
+        .attr("x", pos.x)
+        .attr("y", pos.y - ((lines.length - 1) * lineHeight) / 2)
+        .attr("text-anchor", pos.anchor)
         .attr("font-size", "16px")
         .attr("font-weight", "bold")
-        .attr("fill", "#333")
-        .text(config.name.toUpperCase());
+        .attr("fill", "#333");
+
+      lines.forEach((line, idx) => {
+        text
+          .append("tspan")
+          .attr("x", pos.x)
+          .attr("dy", idx === 0 ? 0 : lineHeight)
+          .text(line);
+      });
     });
 
     // Prepare entries with numbers
