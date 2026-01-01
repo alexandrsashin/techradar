@@ -42,6 +42,22 @@
   margin: 0;
 }
 
+.tech-card-links {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.link-chip {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #1d4ed8;
+  background-color: #e0f2fe;
+  border-radius: 9999px;
+  padding: 0.25rem 0.65rem;
+}
+
 .badge {
   padding: 0.25rem 0.5rem;
   font-size: 0.75rem;
@@ -86,16 +102,4 @@
   background-color: #f3f4f6;
   color: #374151;
   text-transform: capitalize;
-}
-
-.movement-indicator {
-  font-size: 1rem;
-}
-
-.movement-up {
-  color: #16a34a;
-}
-
-.movement-down {
-  color: #dc2626;
 }

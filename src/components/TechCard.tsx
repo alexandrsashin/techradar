@@ -26,19 +26,16 @@ export const TechCard = ({ entry }: TechCardProps) => {
           {ringLabels[entry.ring]}
         </span>
         <span className="badge badge-quadrant">{entry.quadrant}</span>
-        {entry.moved === 1 && (
-          <span className="movement-indicator movement-up" title="Moved up">
-            ▲
-          </span>
-        )}
-        {entry.moved === -1 && (
-          <span className="movement-indicator movement-down" title="Moved down">
-            ▼
-          </span>
-        )}
       </div>
 
       <p className="tech-card-description line-clamp-3">{entry.description}</p>
+
+      {(entry.website || entry.repository) && (
+        <div className="tech-card-links">
+          {entry.website && <span className="link-chip">Website</span>}
+          {entry.repository && <span className="link-chip">GitHub</span>}
+        </div>
+      )}
     </Link>
   );
 };

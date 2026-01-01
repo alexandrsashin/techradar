@@ -1,4 +1,6 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { techEntries } from "../data/techData";
 import "./TechDetail.css";
 
@@ -44,22 +46,50 @@ export const TechDetail = () => {
             {ringLabels[entry.ring]}
           </span>
           <span className="badge badge-quadrant">{entry.quadrant}</span>
-          {entry.moved === 1 && (
-            <span className="movement-text up">
-              <span>▲</span> Moved up
-            </span>
-          )}
-          {entry.moved === -1 && (
-            <span className="movement-text down">
-              <span>▼</span> Moved down
-            </span>
-          )}
         </div>
 
         <div className="detail-section">
           <h2 className="section-title">Description</h2>
           <p className="section-content">{entry.description}</p>
         </div>
+
+        <div className="detail-section">
+          <h2 className="section-title">Details</h2>
+          <div className="detail-markdown">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {entry.detail}
+            </ReactMarkdown>
+          </div>
+        </div>
+
+        {(entry.website || entry.repository || entry.resources?.length) && (
+          <div className="detail-section">
+            <h2 className="section-title">Links</h2>
+            <ul className="detail-links">
+              {entry.website && (
+                <li className="detail-link-item">
+                  <a href={entry.website} target="_blank" rel="noreferrer">
+                    Official site
+                  </a>
+                </li>
+              )}
+              {entry.repository && (
+                <li className="detail-link-item">
+                  <a href={entry.repository} target="_blank" rel="noreferrer">
+                    GitHub repository
+                  </a>
+                </li>
+              )}
+              {entry.resources?.map((resource) => (
+                <li key={resource.url} className="detail-link-item">
+                  <a href={resource.url} target="_blank" rel="noreferrer">
+                    {resource.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

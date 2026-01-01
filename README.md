@@ -81,7 +81,10 @@ Edit `src/data/techData.ts` to add or modify technologies:
   quadrant: 'languages' | 'frameworks' | 'tools' | 'platforms',
   isNew: boolean,
   description: 'Technology description',
-  moved: 1 | -1 | 0  // 1=up, -1=down, 0=no change
+  detail: 'Extended markdown description',
+  website?: 'https://example.com',
+  repository?: 'https://github.com/...',
+  resources?: [{ label: 'Guide', url: 'https://resource' }]
 }
 ```
 

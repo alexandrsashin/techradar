@@ -51,21 +51,6 @@
   flex-wrap: wrap;
 }
 
-.movement-text {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  font-weight: 500;
-}
-
-.movement-text.up {
-  color: #16a34a;
-}
-
-.movement-text.down {
-  color: #dc2626;
-}
-
 .detail-section {
   margin-bottom: 2rem;
 }
@@ -81,6 +66,57 @@
   color: #374151;
   line-height: 1.75;
   margin: 0;
+}
+
+.detail-markdown {
+  color: #374151;
+  line-height: 1.75;
+}
+
+.detail-markdown h3,
+.detail-markdown h4 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.detail-markdown p {
+  margin-bottom: 1rem;
+}
+
+.detail-markdown ul,
+.detail-markdown ol {
+  padding-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.detail-markdown code {
+  background-color: #f3f4f6;
+  border-radius: 0.25rem;
+  padding: 0.1rem 0.35rem;
+  font-family: "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: 0.85rem;
+}
+
+.detail-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detail-link-item a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.detail-link-item a:hover {
+  text-decoration: underline;
 }
 
 .info-box {

@@ -13,6 +13,10 @@ export interface TechEntry {
   quadrant: Quadrant;
   isNew: boolean;
   description: string;
+  detail: string;
+  website?: string;
+  repository?: string;
+  resources?: Array<{ label: string; url: string }>;
 }
 
 export interface RadarConfig {
