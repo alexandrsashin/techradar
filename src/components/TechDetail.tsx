@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -15,6 +16,10 @@ export const TechDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const entry = techEntries.find((e) => e.id === id);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [id]);
 
   if (!entry) {
     return (
