@@ -58,6 +58,8 @@ export const TechRadarVisualization = ({
     const height = 900;
     const centerX = width / 2;
     const centerY = height / 2;
+    // placeholder for gapDegrees; will compute after svg exists
+    let gapDegrees = 6; // default gap between quadrants in degrees
 
     // Clear previous render
     d3.select(svgRef.current).selectAll("*").remove();
@@ -70,51 +72,148 @@ export const TechRadarVisualization = ({
       .style("max-width", "100%")
       .style("height", "auto");
 
+    // compute gap based on ring label size so gap equals label length on arc
+    // create temp text elements to measure label sizes
+    const tempGroup = svg.append("g");
+    let maxLabelWidth = 0;
+    let maxLabelHeight = 0;
+    RINGS.forEach((ring) => {
+      const t = tempGroup
+        .append("text")
+        .attr("x", -9999)
+        .attr("y", -9999)
+        .attr("font-size", "11px")
+        .attr("font-weight", "bold")
+        .text(ring.name);
+      const bbox = (t.node() as any).getBBox();
+      if (bbox.width > maxLabelWidth) maxLabelWidth = bbox.width;
+      if (bbox.height > maxLabelHeight) maxLabelHeight = bbox.height;
+      t.remove();
+    });
+    tempGroup.remove();
+
+    const maxRadiusForGap = RINGS[RINGS.length - 1].radius;
+    const computedGapDegrees =
+      (maxLabelWidth / (2 * Math.PI * maxRadiusForGap)) * 360;
+    gapDegrees = Math.max(6, computedGapDegrees);
+
     const g = svg
       .append("g")
       .attr("transform", `translate(${centerX},${centerY})`);
 
-    // Draw rings
-    RINGS.forEach((ring) => {
-      g.append("circle")
-        .attr("r", ring.radius)
-        .attr("fill", "none")
-        .attr("stroke", "#ddd")
-        .attr("stroke-width", 2);
+    // Top-level tooltip layer (renders after main group so it's always on top)
+    const tooltipLayer = svg.append("g").attr("class", "tooltip-layer");
 
-      // Ring labels
-      g.append("text")
-        .attr("y", -ring.radius + 20)
-        .attr("text-anchor", "middle")
-        .attr("font-size", "14px")
-        .attr("font-weight", "bold")
-        .attr("fill", "#666")
-        .text(ring.name);
+    // Draw circular rings with gaps (sectors)
+    RINGS.forEach((ring, ringIndex) => {
+      // Draw 4 arcs for each ring (one per quadrant)
+      for (let q = 0; q < 4; q++) {
+        const startAngle = q * 90 + gapDegrees / 2;
+        const endAngle = (q + 1) * 90 - gapDegrees / 2;
+
+        const arc = d3
+          .arc()
+          .innerRadius(ring.radius)
+          .outerRadius(ring.radius)
+          .startAngle((startAngle * Math.PI) / 180)
+          .endAngle((endAngle * Math.PI) / 180);
+
+        g.append("path")
+          .attr("d", arc as any)
+          .attr("fill", "none")
+          .attr("stroke", "#ddd")
+          .attr("stroke-width", 2);
+      }
     });
 
-    // Draw quadrant lines
-    g.append("line")
-      .attr("x1", -400)
-      .attr("y1", 0)
-      .attr("x2", 400)
-      .attr("y2", 0)
-      .attr("stroke", "#ddd")
-      .attr("stroke-width", 2);
+    // Draw separator lines as L-shaped segments that start at arc ends
+    const maxRadius = RINGS[RINGS.length - 1].radius;
+    const gapSize = Math.max(12, Math.round(maxLabelHeight + 6)); // central half-gap
 
-    g.append("line")
-      .attr("x1", 0)
-      .attr("y1", -400)
-      .attr("x2", 0)
-      .attr("y2", 400)
-      .attr("stroke", "#ddd")
-      .attr("stroke-width", 2);
+    // For each quadrant boundary (0,90,180,270) compute two arc-end points and
+    // draw L-shaped connector: arcPoint1 -> (signX * gapSize, arcPoint1.y) -> (signX * gapSize, arcPoint2.y) -> arcPoint2
+    [0, 90, 180, 270].forEach((angleDeg) => {
+      const rad1 = ((angleDeg - gapDegrees / 2) * Math.PI) / 180;
+      const rad2 = ((angleDeg + gapDegrees / 2) * Math.PI) / 180;
+
+      const p1 = {
+        x: Math.cos(rad1) * maxRadius,
+        y: Math.sin(rad1) * maxRadius,
+      };
+      const p2 = {
+        x: Math.cos(rad2) * maxRadius,
+        y: Math.sin(rad2) * maxRadius,
+      };
+
+      // If boundary is roughly horizontal (angle 0 or 180), route via x then y
+      if (angleDeg % 180 === 0) {
+        const signX = angleDeg === 0 ? 1 : -1;
+        const midX = signX * gapSize;
+
+        // left segment from p1 to midX at p1.y, then vertical to p2.y, then to p2
+        const pathData = [
+          `M ${p1.x} ${p1.y}`,
+          `L ${midX} ${p1.y}`,
+          `L ${midX} ${p2.y}`,
+          `L ${p2.x} ${p2.y}`,
+        ].join(" ");
+
+        g.append("path")
+          .attr("d", pathData)
+          .attr("fill", "none")
+          .attr("stroke", "#ccc")
+          .attr("stroke-width", 1);
+      } else {
+        // vertical boundary (90 or 270): route via y then x
+        const signY = angleDeg === 90 ? 1 : -1;
+        const midY = signY * gapSize;
+
+        const pathData = [
+          `M ${p1.x} ${p1.y}`,
+          `L ${p1.x} ${midY}`,
+          `L ${p2.x} ${midY}`,
+          `L ${p2.x} ${p2.y}`,
+        ].join(" ");
+
+        g.append("path")
+          .attr("d", pathData)
+          .attr("fill", "none")
+          .attr("stroke", "#ccc")
+          .attr("stroke-width", 1);
+      }
+    });
+
+    // Ring labels in the gaps between quadrants
+    RINGS.forEach((ring, ringIndex) => {
+      [0, 90, 180, 270].forEach((angle) => {
+        const rad = (angle * Math.PI) / 180;
+        const labelRadius =
+          ringIndex === 0
+            ? ring.radius / 2
+            : (ring.radius +
+                (ringIndex > 0 ? RINGS[ringIndex - 1].radius : 0)) /
+              2;
+        const x = Math.cos(rad) * labelRadius;
+        const y = Math.sin(rad) * labelRadius;
+
+        g.append("text")
+          .attr("x", x)
+          .attr("y", y)
+          .attr("text-anchor", "middle")
+          .attr("dominant-baseline", "middle")
+          .attr("font-size", "11px")
+          .attr("font-weight", "bold")
+          .attr("fill", "#999")
+          .text(ring.name);
+      });
+    });
 
     // Quadrant labels
-    QUADRANTS.forEach((quadrant) => {
+    QUADRANTS.forEach((quadrant, index) => {
       const angle = (quadrant.angle * Math.PI) / 180;
-      const labelRadius = 420;
-      const x = Math.cos(angle - Math.PI / 4) * labelRadius;
-      const y = Math.sin(angle - Math.PI / 4) * labelRadius;
+      const labelDistance = RINGS[RINGS.length - 1].radius + 30;
+      const x = Math.cos(angle + Math.PI / 4) * labelDistance;
+      const y = Math.sin(angle + Math.PI / 4) * labelDistance;
 
       g.append("text")
         .attr("x", x)
@@ -126,7 +225,7 @@ export const TechRadarVisualization = ({
         .text(quadrant.name.toUpperCase());
     });
 
-    // Plot blips
+    // Prepare entries with numbers
     const quadrantMap: Record<string, number> = {
       methods: 0,
       "languages-frameworks": 1,
@@ -141,53 +240,153 @@ export const TechRadarVisualization = ({
       hold: 3,
     };
 
-    entries.forEach((entry) => {
-      const quadrantIndex = quadrantMap[entry.quadrant];
-      const ringIndex = ringMap[entry.ring];
+    // Group entries by quadrant and ring, then assign numbers
+    const entriesWithNumbers = entries.map((entry, index) => ({
+      ...entry,
+      number: index + 1,
+    }));
 
-      const minRadius = ringIndex === 0 ? 30 : RINGS[ringIndex - 1].radius;
-      const maxRadius = RINGS[ringIndex].radius;
-      const radius = minRadius + Math.random() * (maxRadius - minRadius - 20);
+    // Collision detection function
+    const positions: Array<{ x: number; y: number; radius: number }> = [];
+    const minDistance = 14; // Minimum distance between blips (reduced for tighter packing)
 
-      const baseAngle = (quadrantIndex * 90 * Math.PI) / 180;
-      const angleRange = (90 * Math.PI) / 180;
+    const findNonOverlappingPosition = (
+      quadrantIndex: number,
+      ringIndex: number,
+      attempts = 50
+    ): { x: number; y: number } | null => {
+      const minRadius = ringIndex === 0 ? 30 : RINGS[ringIndex - 1].radius + 10;
+      const maxRadius = RINGS[ringIndex].radius - 10;
+      const baseAngle = ((quadrantIndex * 90 + gapDegrees) * Math.PI) / 180;
+      const angleRange = ((90 - gapDegrees * 2) * Math.PI) / 180;
+
+      for (let i = 0; i < attempts; i++) {
+        // Generate random position within circular sector
+        const radius = minRadius + Math.random() * (maxRadius - minRadius);
+        const angle = baseAngle + Math.random() * angleRange;
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(angle) * radius;
+
+        // Check collision with existing blips
+        const hasCollision = positions.some((pos) => {
+          const dist = Math.sqrt((x - pos.x) ** 2 + (y - pos.y) ** 2);
+          return dist < minDistance;
+        });
+
+        if (!hasCollision) {
+          positions.push({ x, y, radius: 8 });
+          return { x, y };
+        }
+      }
+
+      // Fallback: return a position anyway
+      const radius = minRadius + Math.random() * (maxRadius - minRadius);
       const angle = baseAngle + Math.random() * angleRange;
-
       const x = Math.cos(angle) * radius;
       const y = Math.sin(angle) * radius;
+      positions.push({ x, y, radius: 8 });
+      return { x, y };
+    };
+
+    // Plot blips
+    entriesWithNumbers.forEach((entry) => {
+      const quadrantIndex = quadrantMap[entry.quadrant];
+      const ringIndex = ringMap[entry.ring];
+      const position = findNonOverlappingPosition(quadrantIndex, ringIndex);
+
+      if (!position) return;
 
       const blip = g
         .append("g")
         .attr("class", "blip")
-        .attr("transform", `translate(${x},${y})`)
+        .attr("transform", `translate(${position.x},${position.y})`)
         .style("cursor", "pointer")
         .on("click", () => onBlipClick(entry));
 
-      // Blip shape - simple circle
-      blip.append("circle").attr("r", 8).attr("fill", RINGS[ringIndex].color);
+      // Blip circle (smaller)
+      blip
+        .append("circle")
+        .attr("r", 7)
+        .attr("fill", RINGS[ringIndex].color)
+        .attr("stroke", "#fff")
+        .attr("stroke-width", 2);
 
-      // Blip label
+      // Blip number (smaller font)
       blip
         .append("text")
-        .attr("dy", -12)
         .attr("text-anchor", "middle")
-        .attr("font-size", "10px")
+        .attr("dominant-baseline", "middle")
+        .attr("font-size", "9px")
         .attr("font-weight", "bold")
         .attr("fill", "#333")
-        .text(entry.name);
+        .text(entry.number);
+
+      // Tooltip on hover: render into `tooltipLayer` so it's always above other elements
+      blip
+        .on("mouseenter", function (event) {
+          // remove any existing floating tooltip
+          tooltipLayer.selectAll(".floating-tooltip").remove();
+
+          // parse current transform of this blip group: translate(x,y)
+          const tr = d3.select(this).attr("transform") || "translate(0,0)";
+          const match = /translate\(([-0-9.]+),?\s*([-0-9.]+)\)/.exec(tr);
+          const tx = match ? parseFloat(match[1]) : 0;
+          const ty = match ? parseFloat(match[2]) : 0;
+
+          const tooltipG = tooltipLayer
+            .append("g")
+            .attr("class", "floating-tooltip")
+            .attr(
+              "transform",
+              `translate(${centerX + tx},${centerY + ty - 18})`
+            )
+            .style("pointer-events", "none");
+
+          const textEl = tooltipG
+            .append("text")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("text-anchor", "middle")
+            .attr("font-size", "11px")
+            .attr("font-weight", "bold")
+            .attr("fill", "#333")
+            .text(entry.name);
+
+          const bbox = (textEl.node() as any).getBBox();
+          tooltipG
+            .insert("rect", "text")
+            .attr("x", bbox.x - 6)
+            .attr("y", bbox.y - 4)
+            .attr("width", bbox.width + 12)
+            .attr("height", bbox.height + 8)
+            .attr("fill", "white")
+            .attr("stroke", "#ddd")
+            .attr("stroke-width", 1)
+            .attr("rx", 4)
+            .attr("opacity", 0.98);
+        })
+        .on("mouseleave", function () {
+          tooltipLayer.selectAll(".floating-tooltip").remove();
+        });
     });
   }, [entries, onBlipClick]);
 
-  // Group entries by quadrant for legend
-  const quadrantEntries: Record<string, TechEntry[]> = {
+  // Group entries by quadrant for legend with numbers
+  const quadrantEntries: Record<
+    string,
+    Array<TechEntry & { number: number }>
+  > = {
     methods: [],
     "languages-frameworks": [],
     tools: [],
     platforms: [],
   };
 
-  entries.forEach((entry) => {
-    quadrantEntries[entry.quadrant].push(entry);
+  entries.forEach((entry, index) => {
+    quadrantEntries[entry.quadrant].push({
+      ...entry,
+      number: index + 1,
+    });
   });
 
   // Sort entries within each quadrant by ring
@@ -211,13 +410,31 @@ export const TechRadarVisualization = ({
     );
   });
 
-  const getBlipIcon = (entry: TechEntry) => {
+  const getBlipIcon = (entry: TechEntry & { number: number }) => {
     const ringIndex = ringMap[entry.ring];
     const ringColor = RINGS[ringIndex].color;
 
     return (
-      <svg width="12" height="12" viewBox="0 0 12 12">
-        <circle cx="6" cy="6" r="5" fill={ringColor} />
+      <svg width="14" height="14" viewBox="0 0 14 14">
+        <circle
+          cx="7"
+          cy="7"
+          r="6"
+          fill={ringColor}
+          stroke="#fff"
+          strokeWidth="1.5"
+        />
+        <text
+          x="7"
+          y="7"
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fontSize="9"
+          fontWeight="bold"
+          fill="#333"
+        >
+          {entry.number}
+        </text>
       </svg>
     );
   };
