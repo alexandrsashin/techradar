@@ -181,40 +181,27 @@ export const TechRadarVisualization = ({
       });
     });
 
-    // Draw vertical and horizontal dividers that delineate quadrant boundaries
-    const dividerExtent = maxRadius + gapSize;
+    // Draw quadrant divider lines starting from offset centers toward max radius
+    quadrantConfigs.forEach((config) => {
+      const xDirection = config.offset.x >= 0 ? 1 : -1;
+      const yDirection = config.offset.y >= 0 ? 1 : -1;
 
-    g.append("line")
-      .attr("x1", gapSize / 2)
-      .attr("y1", -dividerExtent)
-      .attr("x2", gapSize / 2)
-      .attr("y2", dividerExtent)
-      .attr("stroke", "#ccc")
-      .attr("stroke-width", 1);
+      g.append("line")
+        .attr("x1", config.offset.x)
+        .attr("y1", config.offset.y)
+        .attr("x2", config.offset.x + xDirection * maxRadius)
+        .attr("y2", config.offset.y)
+        .attr("stroke", "#ccc")
+        .attr("stroke-width", 1);
 
-    g.append("line")
-      .attr("x1", -gapSize / 2)
-      .attr("y1", -dividerExtent)
-      .attr("x2", -gapSize / 2)
-      .attr("y2", dividerExtent)
-      .attr("stroke", "#ccc")
-      .attr("stroke-width", 1);
-
-    g.append("line")
-      .attr("x1", -dividerExtent)
-      .attr("y1", -gapSize / 2)
-      .attr("x2", dividerExtent)
-      .attr("y2", -gapSize / 2)
-      .attr("stroke", "#ccc")
-      .attr("stroke-width", 1);
-
-    g.append("line")
-      .attr("x1", -dividerExtent)
-      .attr("y1", gapSize / 2)
-      .attr("x2", dividerExtent)
-      .attr("y2", gapSize / 2)
-      .attr("stroke", "#ccc")
-      .attr("stroke-width", 1);
+      g.append("line")
+        .attr("x1", config.offset.x)
+        .attr("y1", config.offset.y)
+        .attr("x2", config.offset.x)
+        .attr("y2", config.offset.y + yDirection * maxRadius)
+        .attr("stroke", "#ccc")
+        .attr("stroke-width", 1);
+    });
 
     // Ring labels positioned inside the cross-shaped gap
     RINGS.forEach((ring, index) => {
