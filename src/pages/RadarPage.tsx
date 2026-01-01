@@ -79,8 +79,10 @@ export const RadarPage = () => {
               className="filter-select"
             >
               <option value="all">All Quadrants</option>
-              <option value="languages">Languages</option>
-              <option value="frameworks">Frameworks</option>
+              <option value="methods">Methods & Techniques</option>
+              <option value="languages-frameworks">
+                Languages & Frameworks
+              </option>
               <option value="tools">Tools</option>
               <option value="platforms">Platforms</option>
             </select>
@@ -109,16 +111,28 @@ export const RadarPage = () => {
           <div className="list-view">
             {/* Group by quadrant */}
             {(
-              ["languages", "frameworks", "tools", "platforms"] as Quadrant[]
+              [
+                "methods",
+                "languages-frameworks",
+                "tools",
+                "platforms",
+              ] as Quadrant[]
             ).map((quadrant) => {
               const quadrantEntries = filteredEntries.filter(
                 (e) => e.quadrant === quadrant
               );
               if (quadrantEntries.length === 0) return null;
 
+              const quadrantNames: Record<Quadrant, string> = {
+                methods: "Methods & Techniques",
+                "languages-frameworks": "Languages & Frameworks",
+                tools: "Tools",
+                platforms: "Platforms",
+              };
+
               return (
                 <div key={quadrant} className="quadrant-section">
-                  <h2 className="quadrant-title">{quadrant}</h2>
+                  <h2 className="quadrant-title">{quadrantNames[quadrant]}</h2>
                   <div className="tech-grid">
                     {quadrantEntries.map((entry) => (
                       <TechCard key={entry.id} entry={entry} />

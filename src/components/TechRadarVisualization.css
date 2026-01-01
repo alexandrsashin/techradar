@@ -80,6 +80,35 @@
   flex-shrink: 0;
 }
 
+.legend-rings-description {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #ddd;
+}
+
+.rings-intro {
+  font-weight: bold;
+  font-size: 0.875rem;
+  color: #333;
+  margin: 0 0 1rem 0;
+}
+
+.rings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ring-description {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: #555;
+}
+
+.ring-description strong {
+  color: #333;
+}
+
 @media (max-width: 768px) {
   .legend-quadrants {
     grid-template-columns: repeat(2, 1fr);

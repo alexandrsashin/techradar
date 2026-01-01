@@ -39,8 +39,8 @@ const RINGS = [
 ];
 
 const QUADRANTS = [
-  { name: "Languages", angle: 0 },
-  { name: "Frameworks", angle: 90 },
+  { name: "Methods & Techniques", angle: 0 },
+  { name: "Languages & Frameworks", angle: 90 },
   { name: "Tools", angle: 180 },
   { name: "Platforms", angle: 270 },
 ];
@@ -128,8 +128,8 @@ export const TechRadarVisualization = ({
 
     // Plot blips
     const quadrantMap: Record<string, number> = {
-      languages: 0,
-      frameworks: 1,
+      methods: 0,
+      "languages-frameworks": 1,
       tools: 2,
       platforms: 3,
     };
@@ -180,8 +180,8 @@ export const TechRadarVisualization = ({
 
   // Group entries by quadrant for legend
   const quadrantEntries: Record<string, TechEntry[]> = {
-    languages: [],
-    frameworks: [],
+    methods: [],
+    "languages-frameworks": [],
     tools: [],
     platforms: [],
   };
@@ -228,8 +228,14 @@ export const TechRadarVisualization = ({
 
       <div className="radar-legend">
         <div className="legend-quadrants">
-          {QUADRANTS.map((quadrant) => {
-            const quadrantKey = quadrant.name.toLowerCase();
+          {QUADRANTS.map((quadrant, index) => {
+            const quadrantKeys = [
+              "methods",
+              "languages-frameworks",
+              "tools",
+              "platforms",
+            ];
+            const quadrantKey = quadrantKeys[index];
             const items = quadrantEntries[quadrantKey] || [];
 
             return (
@@ -254,6 +260,28 @@ export const TechRadarVisualization = ({
               </div>
             );
           })}
+        </div>
+
+        <div className="legend-rings-description">
+          <p className="rings-intro">The rings are:</p>
+          <ul className="rings-list">
+            <li className="ring-description">
+              <strong>Adopt.</strong> Blips that we think you should seriously
+              consider using.
+            </li>
+            <li className="ring-description">
+              <strong>Trial.</strong> Things we think are ready for use, but not
+              as completely proven as those in the Adopt ring.
+            </li>
+            <li className="ring-description">
+              <strong>Assess.</strong> Things to look at closely, but not
+              necessarily trial yet — unless you think they would be a
+              particularly good fit for you.
+            </li>
+            <li className="ring-description">
+              <strong>Hold.</strong> Proceed with caution.
+            </li>
+          </ul>
         </div>
       </div>
     </div>

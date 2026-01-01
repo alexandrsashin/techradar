@@ -1,6 +1,10 @@
 export type Ring = "adopt" | "trial" | "assess" | "hold";
 
-export type Quadrant = "languages" | "frameworks" | "tools" | "platforms";
+export type Quadrant =
+  | "methods"
+  | "languages-frameworks"
+  | "tools"
+  | "platforms";
 
 export interface TechEntry {
   id: string;
