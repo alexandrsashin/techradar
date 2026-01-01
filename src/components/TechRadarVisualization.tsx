@@ -58,8 +58,6 @@ export const TechRadarVisualization = ({
     const height = 900;
     const centerX = width / 2;
     const centerY = height / 2;
-    // placeholder for gapDegrees; will compute after svg exists
-    let gapDegrees = 6; // default gap between quadrants in degrees
 
     // Clear previous render
     d3.select(svgRef.current).selectAll("*").remove();
@@ -85,17 +83,21 @@ export const TechRadarVisualization = ({
         .attr("font-size", "11px")
         .attr("font-weight", "bold")
         .text(ring.name);
-      const bbox = (t.node() as any).getBBox();
-      if (bbox.width > maxLabelWidth) maxLabelWidth = bbox.width;
-      if (bbox.height > maxLabelHeight) maxLabelHeight = bbox.height;
+      const node = t.node() as SVGTextElement | null;
+      if (node) {
+        const bbox = node.getBBox();
+        if (bbox.width > maxLabelWidth) maxLabelWidth = bbox.width;
+        if (bbox.height > maxLabelHeight) maxLabelHeight = bbox.height;
+      }
       t.remove();
     });
     tempGroup.remove();
 
-    const maxRadiusForGap = RINGS[RINGS.length - 1].radius;
-    const computedGapDegrees =
-      (maxLabelWidth / (2 * Math.PI * maxRadiusForGap)) * 360;
-    gapDegrees = Math.max(6, computedGapDegrees);
+    const gapSize = Math.max(
+      16,
+      Math.round(Math.max(maxLabelWidth, maxLabelHeight) + 8)
+    );
+    const maxRadius = RINGS[RINGS.length - 1].radius;
 
     const g = svg
       .append("g")
@@ -103,102 +105,133 @@ export const TechRadarVisualization = ({
 
     // Top-level tooltip layer (renders after main group so it's always on top)
     const tooltipLayer = svg.append("g").attr("class", "tooltip-layer");
+    const polarToCartesian = (
+      cx: number,
+      cy: number,
+      radius: number,
+      angleDeg: number
+    ) => {
+      const angleRad = ((angleDeg - 90) * Math.PI) / 180;
+      return {
+        x: cx + radius * Math.cos(angleRad),
+        y: cy + radius * Math.sin(angleRad),
+      };
+    };
 
-    // Draw circular rings with gaps (sectors)
-    RINGS.forEach((ring, ringIndex) => {
-      // Draw 4 arcs for each ring (one per quadrant)
-      for (let q = 0; q < 4; q++) {
-        const startAngle = q * 90 + gapDegrees / 2;
-        const endAngle = (q + 1) * 90 - gapDegrees / 2;
+    const describeArc = (
+      cx: number,
+      cy: number,
+      radius: number,
+      startAngle: number,
+      endAngle: number
+    ) => {
+      const start = polarToCartesian(cx, cy, radius, endAngle);
+      const end = polarToCartesian(cx, cy, radius, startAngle);
+      const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+      return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 0 ${end.x} ${end.y}`;
+    };
 
-        const arc = d3
-          .arc()
-          .innerRadius(ring.radius)
-          .outerRadius(ring.radius)
-          .startAngle((startAngle * Math.PI) / 180)
-          .endAngle((endAngle * Math.PI) / 180);
+    const quadrantConfigs = [
+      {
+        key: "methods",
+        name: "Methods & Techniques",
+        offset: { x: gapSize / 2, y: -gapSize / 2 },
+        startAngle: 0,
+        endAngle: 90,
+      },
+      {
+        key: "languages-frameworks",
+        name: "Languages & Frameworks",
+        offset: { x: -gapSize / 2, y: -gapSize / 2 },
+        startAngle: 270,
+        endAngle: 360,
+      },
+      {
+        key: "tools",
+        name: "Tools",
+        offset: { x: -gapSize / 2, y: gapSize / 2 },
+        startAngle: 180,
+        endAngle: 270,
+      },
+      {
+        key: "platforms",
+        name: "Platforms",
+        offset: { x: gapSize / 2, y: gapSize / 2 },
+        startAngle: 90,
+        endAngle: 180,
+      },
+    ] as const;
+
+    // Draw quadrant-specific ring arcs with offsets so lines stay inside quadrants
+    RINGS.forEach((ring) => {
+      quadrantConfigs.forEach((config) => {
+        const pathData = describeArc(
+          config.offset.x,
+          config.offset.y,
+          ring.radius,
+          config.startAngle,
+          config.endAngle
+        );
 
         g.append("path")
-          .attr("d", arc as any)
+          .attr("d", pathData)
           .attr("fill", "none")
           .attr("stroke", "#ddd")
           .attr("stroke-width", 2);
-      }
+      });
     });
 
-    // Draw separator lines as L-shaped segments that start at arc ends
-    const maxRadius = RINGS[RINGS.length - 1].radius;
-    const gapSize = Math.max(12, Math.round(maxLabelHeight + 6)); // central half-gap
+    // Draw vertical and horizontal dividers that delineate quadrant boundaries
+    const dividerExtent = maxRadius + gapSize;
 
-    // For each quadrant boundary (0,90,180,270) compute two arc-end points and
-    // draw L-shaped connector: arcPoint1 -> (signX * gapSize, arcPoint1.y) -> (signX * gapSize, arcPoint2.y) -> arcPoint2
-    [0, 90, 180, 270].forEach((angleDeg) => {
-      const rad1 = ((angleDeg - gapDegrees / 2) * Math.PI) / 180;
-      const rad2 = ((angleDeg + gapDegrees / 2) * Math.PI) / 180;
+    g.append("line")
+      .attr("x1", gapSize / 2)
+      .attr("y1", -dividerExtent)
+      .attr("x2", gapSize / 2)
+      .attr("y2", dividerExtent)
+      .attr("stroke", "#ccc")
+      .attr("stroke-width", 1);
 
-      const p1 = {
-        x: Math.cos(rad1) * maxRadius,
-        y: Math.sin(rad1) * maxRadius,
-      };
-      const p2 = {
-        x: Math.cos(rad2) * maxRadius,
-        y: Math.sin(rad2) * maxRadius,
-      };
+    g.append("line")
+      .attr("x1", -gapSize / 2)
+      .attr("y1", -dividerExtent)
+      .attr("x2", -gapSize / 2)
+      .attr("y2", dividerExtent)
+      .attr("stroke", "#ccc")
+      .attr("stroke-width", 1);
 
-      // If boundary is roughly horizontal (angle 0 or 180), route via x then y
-      if (angleDeg % 180 === 0) {
-        const signX = angleDeg === 0 ? 1 : -1;
-        const midX = signX * gapSize;
+    g.append("line")
+      .attr("x1", -dividerExtent)
+      .attr("y1", -gapSize / 2)
+      .attr("x2", dividerExtent)
+      .attr("y2", -gapSize / 2)
+      .attr("stroke", "#ccc")
+      .attr("stroke-width", 1);
 
-        // left segment from p1 to midX at p1.y, then vertical to p2.y, then to p2
-        const pathData = [
-          `M ${p1.x} ${p1.y}`,
-          `L ${midX} ${p1.y}`,
-          `L ${midX} ${p2.y}`,
-          `L ${p2.x} ${p2.y}`,
-        ].join(" ");
+    g.append("line")
+      .attr("x1", -dividerExtent)
+      .attr("y1", gapSize / 2)
+      .attr("x2", dividerExtent)
+      .attr("y2", gapSize / 2)
+      .attr("stroke", "#ccc")
+      .attr("stroke-width", 1);
 
-        g.append("path")
-          .attr("d", pathData)
-          .attr("fill", "none")
-          .attr("stroke", "#ccc")
-          .attr("stroke-width", 1);
-      } else {
-        // vertical boundary (90 or 270): route via y then x
-        const signY = angleDeg === 90 ? 1 : -1;
-        const midY = signY * gapSize;
+    // Ring labels positioned inside the cross-shaped gap
+    RINGS.forEach((ring, index) => {
+      const innerRadius = index === 0 ? 0 : RINGS[index - 1].radius;
+      const labelRadius = innerRadius + (ring.radius - innerRadius) / 2;
 
-        const pathData = [
-          `M ${p1.x} ${p1.y}`,
-          `L ${p1.x} ${midY}`,
-          `L ${p2.x} ${midY}`,
-          `L ${p2.x} ${p2.y}`,
-        ].join(" ");
+      const labelPositions = [
+        { x: 0, y: -gapSize / 2 - labelRadius },
+        { x: 0, y: gapSize / 2 + labelRadius },
+        { x: -gapSize / 2 - labelRadius, y: 0 },
+        { x: gapSize / 2 + labelRadius, y: 0 },
+      ];
 
-        g.append("path")
-          .attr("d", pathData)
-          .attr("fill", "none")
-          .attr("stroke", "#ccc")
-          .attr("stroke-width", 1);
-      }
-    });
-
-    // Ring labels in the gaps between quadrants
-    RINGS.forEach((ring, ringIndex) => {
-      [0, 90, 180, 270].forEach((angle) => {
-        const rad = (angle * Math.PI) / 180;
-        const labelRadius =
-          ringIndex === 0
-            ? ring.radius / 2
-            : (ring.radius +
-                (ringIndex > 0 ? RINGS[ringIndex - 1].radius : 0)) /
-              2;
-        const x = Math.cos(rad) * labelRadius;
-        const y = Math.sin(rad) * labelRadius;
-
+      labelPositions.forEach((pos) => {
         g.append("text")
-          .attr("x", x)
-          .attr("y", y)
+          .attr("x", pos.x)
+          .attr("y", pos.y)
           .attr("text-anchor", "middle")
           .attr("dominant-baseline", "middle")
           .attr("font-size", "11px")
@@ -208,12 +241,18 @@ export const TechRadarVisualization = ({
       });
     });
 
-    // Quadrant labels
-    QUADRANTS.forEach((quadrant, index) => {
-      const angle = (quadrant.angle * Math.PI) / 180;
-      const labelDistance = RINGS[RINGS.length - 1].radius + 30;
-      const x = Math.cos(angle + Math.PI / 4) * labelDistance;
-      const y = Math.sin(angle + Math.PI / 4) * labelDistance;
+    // Quadrant labels positioned beyond each quadrant's offset center
+    quadrantConfigs.forEach((config) => {
+      const dirLength = Math.sqrt(
+        config.offset.x * config.offset.x + config.offset.y * config.offset.y
+      );
+      const normalized = {
+        x: dirLength === 0 ? 0 : config.offset.x / dirLength,
+        y: dirLength === 0 ? 0 : config.offset.y / dirLength,
+      };
+      const labelRadius = maxRadius + gapSize + 40;
+      const x = config.offset.x + normalized.x * labelRadius;
+      const y = config.offset.y + normalized.y * labelRadius;
 
       g.append("text")
         .attr("x", x)
@@ -222,16 +261,17 @@ export const TechRadarVisualization = ({
         .attr("font-size", "16px")
         .attr("font-weight", "bold")
         .attr("fill", "#333")
-        .text(quadrant.name.toUpperCase());
+        .text(config.name.toUpperCase());
     });
 
     // Prepare entries with numbers
-    const quadrantMap: Record<string, number> = {
-      methods: 0,
-      "languages-frameworks": 1,
-      tools: 2,
-      platforms: 3,
-    };
+    const quadrantMap = quadrantConfigs.reduce<Record<string, number>>(
+      (acc, config, index) => {
+        acc[config.key] = index;
+        return acc;
+      },
+      {}
+    );
 
     const ringMap: Record<string, number> = {
       adopt: 0,
@@ -257,15 +297,29 @@ export const TechRadarVisualization = ({
     ): { x: number; y: number } | null => {
       const minRadius = ringIndex === 0 ? 30 : RINGS[ringIndex - 1].radius + 10;
       const maxRadius = RINGS[ringIndex].radius - 10;
-      const baseAngle = ((quadrantIndex * 90 + gapDegrees) * Math.PI) / 180;
-      const angleRange = ((90 - gapDegrees * 2) * Math.PI) / 180;
+      const config = quadrantConfigs[quadrantIndex];
+      if (!config) return null;
+
+      let startAngle = config.startAngle + 5;
+      let endAngle = config.endAngle - 5;
+      if (endAngle <= startAngle) {
+        startAngle = config.startAngle;
+        endAngle = config.endAngle;
+      }
+      const angleSpan = endAngle - startAngle;
+      if (angleSpan <= 0) return null;
 
       for (let i = 0; i < attempts; i++) {
         // Generate random position within circular sector
         const radius = minRadius + Math.random() * (maxRadius - minRadius);
-        const angle = baseAngle + Math.random() * angleRange;
-        const x = Math.cos(angle) * radius;
-        const y = Math.sin(angle) * radius;
+        const angleDeg = startAngle + Math.random() * angleSpan;
+        const point = polarToCartesian(
+          config.offset.x,
+          config.offset.y,
+          radius,
+          angleDeg
+        );
+        const { x, y } = point;
 
         // Check collision with existing blips
         const hasCollision = positions.some((pos) => {
@@ -281,9 +335,14 @@ export const TechRadarVisualization = ({
 
       // Fallback: return a position anyway
       const radius = minRadius + Math.random() * (maxRadius - minRadius);
-      const angle = baseAngle + Math.random() * angleRange;
-      const x = Math.cos(angle) * radius;
-      const y = Math.sin(angle) * radius;
+      const angleDeg = startAngle + Math.random() * angleSpan;
+      const point = polarToCartesian(
+        config.offset.x,
+        config.offset.y,
+        radius,
+        angleDeg
+      );
+      const { x, y } = point;
       positions.push({ x, y, radius: 8 });
       return { x, y };
     };
@@ -323,7 +382,7 @@ export const TechRadarVisualization = ({
 
       // Tooltip on hover: render into `tooltipLayer` so it's always above other elements
       blip
-        .on("mouseenter", function (event) {
+        .on("mouseenter", function () {
           // remove any existing floating tooltip
           tooltipLayer.selectAll(".floating-tooltip").remove();
 
@@ -352,7 +411,11 @@ export const TechRadarVisualization = ({
             .attr("fill", "#333")
             .text(entry.name);
 
-          const bbox = (textEl.node() as any).getBBox();
+          const textNode = textEl.node() as SVGTextElement | null;
+          if (!textNode) {
+            return;
+          }
+          const bbox = textNode.getBBox();
           tooltipG
             .insert("rect", "text")
             .attr("x", bbox.x - 6)
