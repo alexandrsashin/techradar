@@ -9,7 +9,6 @@ export interface TechEntry {
   quadrant: Quadrant;
   isNew: boolean;
   description: string;
-  moved?: number; // 1 = up, -1 = down, 0 = no change
 }
 
 export interface RadarConfig {

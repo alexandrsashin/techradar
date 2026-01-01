@@ -163,25 +163,8 @@ export const TechRadarVisualization = ({
         .style("cursor", "pointer")
         .on("click", () => onBlipClick(entry));
 
-      // Blip shape
-      if (entry.moved === 1) {
-        blip
-          .append("path")
-          .attr("d", "M -8,4 8,4 0,-10 z")
-          .attr("fill", RINGS[ringIndex].color);
-      } else if (entry.moved === -1) {
-        blip
-          .append("path")
-          .attr("d", "M -8,-4 8,-4 0,10 z")
-          .attr("fill", RINGS[ringIndex].color);
-      } else if (entry.moved === 0) {
-        blip.append("circle").attr("r", 8).attr("fill", RINGS[ringIndex].color);
-      } else {
-        blip
-          .append("path")
-          .attr("d", d3.symbol().type(d3.symbolStar).size(160)())
-          .attr("fill", RINGS[ringIndex].color);
-      }
+      // Blip shape - simple circle
+      blip.append("circle").attr("r", 8).attr("fill", RINGS[ringIndex].color);
 
       // Blip label
       blip
@@ -193,142 +176,86 @@ export const TechRadarVisualization = ({
         .attr("fill", "#333")
         .text(entry.name);
     });
-
-    // Legend - Movement indicators
-    const movementLegend = svg
-      .append("g")
-      .attr("transform", `translate(20, ${height - 100})`);
-
-    movementLegend
-      .append("text")
-      .attr("font-weight", "bold")
-      .attr("font-size", "12px")
-      .text("Movement:");
-
-    const legendItems = [
-      { symbol: "circle", text: "No change", y: 20 },
-      { symbol: "triangle-up", text: "Moved up", y: 40 },
-      { symbol: "triangle-down", text: "Moved down", y: 60 },
-      { symbol: "star", text: "New entry", y: 80 },
-    ];
-
-    legendItems.forEach((item) => {
-      const g = movementLegend
-        .append("g")
-        .attr("transform", `translate(0, ${item.y})`);
-
-      if (item.symbol === "circle") {
-        g.append("circle").attr("r", 6).attr("cx", 10).attr("fill", "#93c47d");
-      } else if (item.symbol === "triangle-up") {
-        g.append("path")
-          .attr("d", "M 2,10 18,10 10,-6 z")
-          .attr("fill", "#93c47d");
-      } else if (item.symbol === "triangle-down") {
-        g.append("path")
-          .attr("d", "M 2,0 18,0 10,16 z")
-          .attr("fill", "#93c47d");
-      } else if (item.symbol === "star") {
-        g.append("path")
-          .attr("d", d3.symbol().type(d3.symbolStar).size(120)())
-          .attr("transform", "translate(10, 6)")
-          .attr("fill", "#93c47d");
-      }
-
-      g.append("text")
-        .attr("x", 25)
-        .attr("y", 10)
-        .attr("font-size", "11px")
-        .text(item.text);
-    });
-
-    // Legend - Ring descriptions
-    const ringLegend = svg
-      .append("g")
-      .attr("transform", `translate(${width - 420}, 20)`);
-
-    ringLegend
-      .append("text")
-      .attr("font-weight", "bold")
-      .attr("font-size", "14px")
-      .text("Rings:");
-
-    RINGS.forEach((ring, index) => {
-      const yOffset = 25 + index * 90;
-      const legendGroup = ringLegend
-        .append("g")
-        .attr("transform", `translate(0, ${yOffset})`);
-
-      // Ring color indicator
-      legendGroup
-        .append("circle")
-        .attr("r", 8)
-        .attr("cx", 8)
-        .attr("cy", 0)
-        .attr("fill", ring.color);
-
-      // Ring name
-      legendGroup
-        .append("text")
-        .attr("x", 25)
-        .attr("y", 5)
-        .attr("font-weight", "bold")
-        .attr("font-size", "13px")
-        .attr("fill", "#333")
-        .text(ring.name);
-
-      // Ring description (wrapped text)
-      const words = ring.description.split(" ");
-      let line: string[] = [];
-      let lineNumber = 0;
-      const lineHeight = 14;
-      const maxWidth = 380;
-
-      const testText = legendGroup
-        .append("text")
-        .attr("x", 25)
-        .attr("y", 22)
-        .attr("font-size", "11px")
-        .attr("fill", "#666");
-
-      words.forEach((word) => {
-        line.push(word);
-        const testLine = line.join(" ");
-        const testElement = testText.text(testLine);
-        const textLength = (
-          testElement.node() as SVGTextElement
-        )?.getComputedTextLength();
-
-        if (textLength && textLength > maxWidth) {
-          line.pop();
-          testText.text(line.join(" "));
-          legendGroup
-            .append("text")
-            .attr("x", 25)
-            .attr("y", 22 + lineNumber * lineHeight)
-            .attr("font-size", "11px")
-            .attr("fill", "#666")
-            .text(line.join(" "));
-          line = [word];
-          lineNumber++;
-        }
-      });
-
-      if (line.length > 0) {
-        testText.remove();
-        legendGroup
-          .append("text")
-          .attr("x", 25)
-          .attr("y", 22 + lineNumber * lineHeight)
-          .attr("font-size", "11px")
-          .attr("fill", "#666")
-          .text(line.join(" "));
-      }
-    });
   }, [entries, onBlipClick]);
+
+  // Group entries by quadrant for legend
+  const quadrantEntries: Record<string, TechEntry[]> = {
+    languages: [],
+    frameworks: [],
+    tools: [],
+    platforms: [],
+  };
+
+  entries.forEach((entry) => {
+    quadrantEntries[entry.quadrant].push(entry);
+  });
+
+  // Sort entries within each quadrant by ring
+  const ringOrder: Record<string, number> = {
+    adopt: 0,
+    trial: 1,
+    assess: 2,
+    hold: 3,
+  };
+
+  const ringMap: Record<string, number> = {
+    adopt: 0,
+    trial: 1,
+    assess: 2,
+    hold: 3,
+  };
+
+  Object.keys(quadrantEntries).forEach((quadrant) => {
+    quadrantEntries[quadrant].sort(
+      (a, b) => ringOrder[a.ring] - ringOrder[b.ring]
+    );
+  });
+
+  const getBlipIcon = (entry: TechEntry) => {
+    const ringIndex = ringMap[entry.ring];
+    const ringColor = RINGS[ringIndex].color;
+
+    return (
+      <svg width="12" height="12" viewBox="0 0 12 12">
+        <circle cx="6" cy="6" r="5" fill={ringColor} />
+      </svg>
+    );
+  };
 
   return (
     <div className="radar-container">
       <svg ref={svgRef}></svg>
+
+      <div className="radar-legend">
+        <div className="legend-quadrants">
+          {QUADRANTS.map((quadrant) => {
+            const quadrantKey = quadrant.name.toLowerCase();
+            const items = quadrantEntries[quadrantKey] || [];
+
+            return (
+              <div key={quadrant.name} className="legend-column">
+                <h3 className="legend-title">{quadrant.name.toUpperCase()}</h3>
+                <div className="legend-divider"></div>
+                <ul className="legend-items">
+                  {items.map((item) => (
+                    <li
+                      key={item.id}
+                      className="legend-item"
+                      onClick={() => onBlipClick(item)}
+                    >
+                      <span className="legend-icon">{getBlipIcon(item)}</span>
+                      <span className="legend-name">{item.name}</span>
+                      <span className="legend-ring">
+                        [{item.ring.toUpperCase()}]
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 };

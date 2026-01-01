@@ -1,6 +1,87 @@
 .radar-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 1rem;
+}
+
+.radar-legend {
+  width: 100%;
+  max-width: 900px;
+  margin-top: 2rem;
+}
+
+.legend-quadrants {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.legend-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.legend-title {
+  font-size: 0.875rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+}
+
+.legend-divider {
+  height: 1px;
+  background-color: #ddd;
+  margin-bottom: 0.75rem;
+}
+
+.legend-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.legend-item:hover {
+  background-color: #f5f5f5;
+}
+
+.legend-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.legend-name {
+  font-size: 0.6875rem;
+  color: #333;
+  flex: 1;
+}
+
+.legend-ring {
+  font-size: 0.5625rem;
+  font-weight: 600;
+  color: #888;
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .legend-quadrants {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
